@@ -1,3 +1,5 @@
+import 'package:final_project/presentation/login.dart';
+import 'package:final_project/presentation/register.dart';
 import 'package:flutter/material.dart';
 
 class Authentication extends StatelessWidget {
@@ -6,18 +8,30 @@ class Authentication extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          ElevatedButton(
-              onPressed: (){},
-              child: const Text(
-                "login"
-              ),),
-          ElevatedButton(
-              onPressed: () {},
-              child: const Text("register"),
-          )
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => const Login()
+
+                  ),);
+                },
+                child: const Text(
+                  "login"
+                ),),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => const Register()
+                  ),);
+                },
+                child: const Text("register"),
+            )
+          ],
+        ),
       ),
     );
   }
