@@ -1,3 +1,4 @@
+import 'package:final_project/presentation/speech_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
@@ -13,13 +14,33 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Widget _currentWidget = Container();
+  var _currentIndex = 0;
+  Widget _settingsScreen() {
+    return Container(
+      color: Colors.red[200],
+    );
+  }
+   _loadScreen() {
+    switch(_currentIndex) {
+      case 1: return Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context)=> const SpeechScreen()));
+      case 0: return setState(() => _currentWidget = _settingsScreen());
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    _loadScreen();
+  }
+
   @override
   Widget build(BuildContext context) {
 
     Future<void> _signOut() async {
       await FirebaseAuth.instance.signOut();
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context)=> const AuthTypeSelector()));
+          MaterialPageRoute(builder: (context)=> const MyApp()));
     }
     return Scaffold(
       
@@ -39,6 +60,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Center(child: Text("Profile screen")),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+          _loadScreen();
+        },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
