@@ -15,7 +15,7 @@ class Authentication extends StatelessWidget {
             ElevatedButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => const Login()
+                      builder: (context) => const LoginScreen()
 
                   ),);
                 },
@@ -25,7 +25,7 @@ class Authentication extends StatelessWidget {
             ElevatedButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(
-                      builder: (context) => const Register()
+                      builder: (context) => const RegisterPage()
                   ),);
                 },
                 child: const Text("register"),
