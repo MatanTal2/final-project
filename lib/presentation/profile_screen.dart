@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../main.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:highlight_text/highlight_text.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
