@@ -1,3 +1,5 @@
+import 'package:final_project/presentation/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -11,6 +13,7 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   bool _passwordVisible = true;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -94,6 +97,28 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           const SizedBox(
             height: 88.0,
+          ),
+          Container(
+            width: double.infinity,
+            child: RawMaterialButton(
+              onPressed: () async {
+                await _auth.createUserWithEmailAndPassword(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                );
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => const LoginScreen()));
+              },
+              fillColor: Colors.blue,
+              elevation: 0.0,
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0)),
+              child: const Text(
+                "Register",
+                style: TextStyle(color: Colors.white, fontSize: 18.0),
+              ),
+            ),
           ),
         ],
       ),
