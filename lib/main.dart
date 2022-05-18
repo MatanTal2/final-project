@@ -76,6 +76,7 @@ class _AuthTypeSelectorState extends State<AuthTypeSelector> {
                   stream: FirebaseAuth.instance.authStateChanges(),
                   builder: (context, snapshot){
                     if (snapshot.hasData) {
+                      print("size box");
                       return const ProfileScreen();
                     }
                     return const Authentication();
@@ -86,14 +87,6 @@ class _AuthTypeSelectorState extends State<AuthTypeSelector> {
         );
       }),
     );
-
-    if (isConnect) {
-      return ProfileScreen();
-    } else {
-      return Scaffold(
-        body: LoginScreen(),
-      );
-    }
   }
 }
 
