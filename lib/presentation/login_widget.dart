@@ -19,11 +19,18 @@ class _LoginWidgetState extends State<LoginWidget> {
   final _passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
+  bool _isPasswordVisible = true;
+
   @override
   dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    _isPasswordVisible = true;
   }
 
   @override
@@ -62,10 +69,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                   labelText: "email",
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (email) => email != null && !EmailValidator.validate(email)
-                    ? 'Enter valid email'
-                    : null,
-
+                validator: (email) =>
+                    email != null && !EmailValidator.validate(email)
+                        ? 'Enter valid email'
+                        : null,
               ),
               const SizedBox(
                 height: 4.0,
@@ -73,8 +80,17 @@ class _LoginWidgetState extends State<LoginWidget> {
               TextFormField(
                 controller: _passwordController,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "password"),
-                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "password",
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        changePasswordVisibility();
+                      },
+                      icon: Icon(_isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility)),
+                ),
+                obscureText: _isPasswordVisible,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) => value != null && value.length > 6
                     ? 'Enter minimum, 6 digits'
@@ -123,14 +139,14 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   Future signIn() async {
     final isValid = formKey.currentState!.validate();
-    if(!isValid) return;
+    if (!isValid) return;
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(
               child: CircularProgressIndicator(),
             ));
-    try{
+    try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -141,5 +157,11 @@ class _LoginWidgetState extends State<LoginWidget> {
       Utils.showSnackBar(e.message);
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
-    }
+  }
+
+  void changePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
+  }
 }

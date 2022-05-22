@@ -24,11 +24,18 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   final _passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
+  bool _isPasswordVisible = true;
+
   @override
   dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    _isPasswordVisible = true;
   }
 
   @override
@@ -78,10 +85,21 @@ class _SignUpWidgetState extends State<SignUpWidget> {
               TextFormField(
                 controller: _passwordController,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "password"),
-                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "password",
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        changePasswordVisibility();
+                      },
+                      icon: Icon(_isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility)),
+                ),
+                obscureText: _isPasswordVisible,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => value != null && value.length < 6   //Todo: create password validator function
+                validator: (value) => value != null &&
+                        value.length <
+                            6 //Todo: create password validator function
                     ? 'Enter minimum, 6 digits'
                     : null,
               ),
@@ -128,7 +146,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
 
   Future signUp() async {
     final isValid = formKey.currentState!.validate();
-    if(!isValid) return;
+    if (!isValid) return;
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -145,5 +163,11 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       Utils.showSnackBar(e.message);
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
+  }
+
+  void changePasswordVisibility() {
+    setState(() {
+      _isPasswordVisible = !_isPasswordVisible;
+    });
   }
 }
