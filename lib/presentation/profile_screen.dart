@@ -37,11 +37,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
 
-    Future<void> _signOut() async {
-      await FirebaseAuth.instance.signOut();
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context)=> const MyApp()));
-    }
     return Scaffold(
       
       appBar: AppBar(
@@ -49,11 +44,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       drawer: Drawer(
         child: ListView(
-          children: [
-            const DrawerHeader(child: Text("data"),),
+          children: const [
+            DrawerHeader(child: Text("data"),),
             ListTile(
-              title: const Text("Logout"),
-              onTap: _signOut,
+              title: Text("Logout"),
             ),
           ],
         ),
