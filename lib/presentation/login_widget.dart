@@ -88,7 +88,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                       },
                       icon: Icon(_isPasswordVisible
                           ? Icons.visibility_off
-                          : Icons.visibility)),
+                          : Icons.visibility),
+                      color: _isPasswordVisible
+                          ? Colors.white30
+                          : Colors.redAccent),
                 ),
                 obscureText: _isPasswordVisible,
                 autovalidateMode: AutovalidateMode.onUserInteraction,

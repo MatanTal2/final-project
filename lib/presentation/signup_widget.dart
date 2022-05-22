@@ -88,12 +88,16 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 decoration: InputDecoration(
                   labelText: "password",
                   suffixIcon: IconButton(
-                      onPressed: () {
-                        changePasswordVisibility();
-                      },
-                      icon: Icon(_isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility)),
+                    onPressed: () {
+                      changePasswordVisibility();
+                    },
+                    icon: Icon(_isPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    color: _isPasswordVisible
+                        ? Colors.white30
+                        : Colors.redAccent,
+                  ),
                 ),
                 obscureText: _isPasswordVisible,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
