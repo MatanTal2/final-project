@@ -2,6 +2,9 @@ import 'package:final_project/presentation/auth_page.dart';
 import 'package:final_project/presentation/authentication.dart';
 import 'package:final_project/presentation/home_page.dart';
 import 'package:final_project/presentation/profile_screen.dart';
+import 'package:final_project/presentation/utils.dart';
+import 'package:final_project/presentation/utils.dart';
+import 'package:final_project/presentation/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,6 +24,7 @@ class MyAp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
+    scaffoldMessengerKey: Utils.messengerKey,
     navigatorKey: navigatorKey,
     debugShowCheckedModeBanner: false,
     title: title,
