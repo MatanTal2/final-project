@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
                   Icons.arrow_back,
                   size: 32.0,
                 ),
-                label: Text("SignOut"))
+                label: const Text("Sign Out"))
           ],
         ),
       ),
