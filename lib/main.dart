@@ -1,6 +1,6 @@
 import 'package:final_project/presentation/auth_page.dart';
 import 'package:final_project/presentation/home_page.dart';
-import 'package:final_project/presentation/profile_screen.dart';
+import 'package:final_project/presentation/temp.dart';
 import 'package:final_project/presentation/utils.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
