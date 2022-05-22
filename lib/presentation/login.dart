@@ -117,8 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
               child: RawMaterialButton(
                 onPressed: () async {
                   User? user = await LoginUsingEmailPassword(
-                      email: _emailController.text,
-                      password: _passwordController.text,
+                      email: _emailController.text.trim(),
+                      password: _passwordController.text.trim(),
                       context: context);
                   print(user);
                   if(user != null){
