@@ -1,25 +1,21 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:final_project/presentation/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import '../main.dart';
+import '../presentation/forgot_password_page.dart';
 
-class SignUpWidget extends StatefulWidget {
-  final Function() onClickSignIn;
+class LoginWidget extends StatefulWidget {
+  final VoidCallback onClickSignUp;
 
-  const SignUpWidget({
-    Key? key,
-    required this.onClickSignIn,
-  }) : super(key: key);
+  const LoginWidget({Key? key, required this.onClickSignUp}) : super(key: key);
 
   @override
-  State<SignUpWidget> createState() => _SignUpWidgetState();
+  State<LoginWidget> createState() => _LoginWidgetState();
 }
 
-class _SignUpWidgetState extends State<SignUpWidget> {
+class _LoginWidgetState extends State<LoginWidget> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -76,7 +72,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (email) =>
                     email != null && !EmailValidator.validate(email)
-                        ? 'Enter a valid email'
+                        ? 'Enter valid email'
                         : null,
               ),
               const SizedBox(
@@ -88,22 +84,19 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 decoration: InputDecoration(
                   labelText: "password",
                   suffixIcon: IconButton(
-                    onPressed: () {
-                      changePasswordVisibility();
-                    },
-                    icon: Icon(_isPasswordVisible
-                        ? Icons.visibility_off
-                        : Icons.visibility),
-                    color: _isPasswordVisible
-                        ? Colors.white30
-                        : Colors.redAccent,
-                  ),
+                      onPressed: () {
+                        changePasswordVisibility();
+                      },
+                      icon: Icon(_isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      color: _isPasswordVisible
+                          ? Colors.white30
+                          : Colors.redAccent),
                 ),
                 obscureText: _isPasswordVisible,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => value != null &&
-                        value.length <
-                            6 //Todo: create password validator function
+                validator: (value) => value != null && value.length > 6
                     ? 'Enter minimum, 6 digits'
                     : null,
               ),
@@ -114,27 +107,41 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 style: ElevatedButton.styleFrom(
                   maximumSize: const Size.fromHeight(50.0),
                 ),
-                onPressed: signUp,
+                onPressed: signIn,
                 icon: const Icon(
                   Icons.arrow_forward,
                   size: 32.0,
                 ),
                 label: const Text(
-                  "Sign Up",
+                  "Sign In",
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
               const SizedBox(
-                height: 20.0,
+                height: 12.0,
               ),
+              GestureDetector(
+                child: Text(
+                  'Forgot Password?',
+                  style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 15.0,
+                  ),
+                ),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ForgotPasswordPage(),
+                )),
+              ),
+              SizedBox(height: 8.0,),
               RichText(
                 text: TextSpan(
                   text: "No Account? ",
                   children: [
                     TextSpan(
                       recognizer: TapGestureRecognizer()
-                        ..onTap = widget.onClickSignIn,
-                      text: "Sign In",
+                        ..onTap = widget.onClickSignUp,
+                      text: "Sign Up",
                       style: TextStyle(
                         decoration: TextDecoration.underline,
                         color: Theme.of(context).colorScheme.primary,
@@ -148,7 +155,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
         ),
       );
 
-  Future signUp() async {
+  Future signIn() async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
     showDialog(
@@ -158,13 +165,14 @@ class _SignUpWidgetState extends State<SignUpWidget> {
               child: CircularProgressIndicator(),
             ));
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
     } on FirebaseAuthException catch (e) {
       print(e);
 
-      Utils.showSnackBar(e.message);
+      Utils.showSnackBar(e.message, Colors.red);
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }

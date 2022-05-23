@@ -1,21 +1,25 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:final_project/presentation/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
 import '../main.dart';
-import 'forgot_password_page.dart';
 
-class LoginWidget extends StatefulWidget {
-  final VoidCallback onClickSignUp;
+class SignUpWidget extends StatefulWidget {
+  final Function() onClickSignIn;
 
-  const LoginWidget({Key? key, required this.onClickSignUp}) : super(key: key);
+  const SignUpWidget({
+    Key? key,
+    required this.onClickSignIn,
+  }) : super(key: key);
 
   @override
-  State<LoginWidget> createState() => _LoginWidgetState();
+  State<SignUpWidget> createState() => _SignUpWidgetState();
 }
 
-class _LoginWidgetState extends State<LoginWidget> {
+class _SignUpWidgetState extends State<SignUpWidget> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -52,7 +56,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 height: 20.0,
               ),
               const Text(
-                "Welcome Back",
+                "Welcome, Sign UP!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -72,7 +76,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (email) =>
                     email != null && !EmailValidator.validate(email)
-                        ? 'Enter valid email'
+                        ? 'Enter a valid email'
                         : null,
               ),
               const SizedBox(
@@ -84,19 +88,22 @@ class _LoginWidgetState extends State<LoginWidget> {
                 decoration: InputDecoration(
                   labelText: "password",
                   suffixIcon: IconButton(
-                      onPressed: () {
-                        changePasswordVisibility();
-                      },
-                      icon: Icon(_isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility),
-                      color: _isPasswordVisible
-                          ? Colors.white30
-                          : Colors.redAccent),
+                    onPressed: () {
+                      changePasswordVisibility();
+                    },
+                    icon: Icon(_isPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility),
+                    color: _isPasswordVisible
+                        ? Colors.white30
+                        : Colors.redAccent,
+                  ),
                 ),
                 obscureText: _isPasswordVisible,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => value != null && value.length > 6
+                validator: (value) => value != null &&
+                        value.length <
+                            6 //Todo: create password validator function
                     ? 'Enter minimum, 6 digits'
                     : null,
               ),
@@ -107,40 +114,27 @@ class _LoginWidgetState extends State<LoginWidget> {
                 style: ElevatedButton.styleFrom(
                   maximumSize: const Size.fromHeight(50.0),
                 ),
-                onPressed: signIn,
+                onPressed: signUp,
                 icon: const Icon(
                   Icons.arrow_forward,
                   size: 32.0,
                 ),
                 label: const Text(
-                  "Sign In",
+                  "Sign Up",
                   style: TextStyle(fontSize: 24.0),
                 ),
               ),
               const SizedBox(
-                height: 24.0,
-              ),
-              GestureDetector(
-                child: Text(
-                  'Forgot Password?',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontSize: 20.0,
-                  ),
-                ),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const ForgotPasswordPage(),
-                )),
+                height: 20.0,
               ),
               RichText(
                 text: TextSpan(
-                  text: "No Account? ",
+                  text: "Already Have an account? ",
                   children: [
                     TextSpan(
                       recognizer: TapGestureRecognizer()
-                        ..onTap = widget.onClickSignUp,
-                      text: "Sign Up",
+                        ..onTap = widget.onClickSignIn,
+                      text: "Sign In",
                       style: TextStyle(
                         decoration: TextDecoration.underline,
                         color: Theme.of(context).colorScheme.primary,
@@ -154,7 +148,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         ),
       );
 
-  Future signIn() async {
+  Future signUp() async {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
     showDialog(
@@ -164,14 +158,13 @@ class _LoginWidgetState extends State<LoginWidget> {
               child: CircularProgressIndicator(),
             ));
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
     } on FirebaseAuthException catch (e) {
       print(e);
 
-      Utils.showSnackBar(e.message);
+      Utils.showSnackBar(e.message, Colors.red);
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
