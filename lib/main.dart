@@ -1,9 +1,6 @@
 import 'package:final_project/page/auth_page.dart';
-import 'package:final_project/page/home_page.dart';
 import 'package:final_project/page/speech_page.dart';
-import 'package:final_project/presentation/profile_screen.dart';
 import 'package:final_project/presentation/utils.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
