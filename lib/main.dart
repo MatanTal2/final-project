@@ -1,5 +1,6 @@
-import 'package:final_project/presentation/auth_page.dart';
-import 'package:final_project/presentation/home_page.dart';
+import 'package:final_project/page/auth_page.dart';
+import 'package:final_project/page/home_page.dart';
+import 'package:final_project/page/speech_page.dart';
 import 'package:final_project/presentation/profile_screen.dart';
 import 'package:final_project/presentation/utils.dart';
 
@@ -57,7 +58,7 @@ class MainPage extends StatelessWidget {
                 child: Text("Something went wrong!"),
               );
             } else if (snapshot.hasData) {
-              return const HomePage();
+              return const SpeechPage();
             } else {
               return const AuthPage();
             }

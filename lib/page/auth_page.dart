@@ -1,5 +1,5 @@
-import 'package:final_project/presentation/login_widget.dart';
-import 'package:final_project/presentation/signup_widget.dart';
+import 'package:final_project/widget/login_widget.dart';
+import 'package:final_project/widget/signup_widget.dart';
 import 'package:flutter/cupertino.dart';
 
 class AuthPage extends StatefulWidget {

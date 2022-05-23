@@ -56,7 +56,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 height: 20.0,
               ),
               const Text(
-                "Welcome Back",
+                "Welcome, Sign UP!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -129,7 +129,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
               ),
               RichText(
                 text: TextSpan(
-                  text: "No Account? ",
+                  text: "Already Have an account? ",
                   children: [
                     TextSpan(
                       recognizer: TapGestureRecognizer()
@@ -164,7 +164,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     } on FirebaseAuthException catch (e) {
       print(e);
 
-      Utils.showSnackBar(e.message);
+      Utils.showSnackBar(e.message, Colors.red);
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
