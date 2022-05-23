@@ -118,7 +118,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 ),
               ),
               const SizedBox(
-                height: 24.0,
+                height: 12.0,
               ),
               GestureDetector(
                 child: Text(
@@ -126,13 +126,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                   style: TextStyle(
                     decoration: TextDecoration.underline,
                     color: Theme.of(context).colorScheme.secondary,
-                    fontSize: 20.0,
+                    fontSize: 15.0,
                   ),
                 ),
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const ForgotPasswordPage(),
                 )),
               ),
+              SizedBox(height: 8.0,),
               RichText(
                 text: TextSpan(
                   text: "No Account? ",
