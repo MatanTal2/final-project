@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
 
 import '../presentation/utils.dart';
+import '../widget/navigation_drawer_widget.dart';
 
 class SpeechPage extends StatefulWidget {
   const SpeechPage({Key? key}) : super(key: key);
