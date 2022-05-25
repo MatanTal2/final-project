@@ -37,6 +37,7 @@ class _SpeechPageState extends State<SpeechPage> {
                     )),
           ],
         ),
+        drawer: NavigationDrawerWidget(),
         body: SingleChildScrollView(
           reverse: true,
           padding: const EdgeInsets.all(30.0).copyWith(bottom: 150.0),

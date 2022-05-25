@@ -13,7 +13,7 @@ class SpeechApi {
       return true;
     }
     final isAvailable = await _speech.initialize(
-      finalTimeout: Duration(minutes: 1),
+      finalTimeout: const Duration(minutes: 1), 
       //TODO test for timeout, maybe give the user choose.
       onStatus: (status) => onListening(_speech.isListening),
       onError: (e) => print('Error $e'),
@@ -21,8 +21,8 @@ class SpeechApi {
 
     var locales = await speechLanguagePick();
     // TODO
-    // Some UI or other code to select a locale from the list
-    // resulting in an index, selectedLocale
+    // TODO Some UI or other code to select a locale (language) from the list
+    // TODO resulting in an index, selectedLocale
 
     if (isAvailable) {
       _speech.listen(
