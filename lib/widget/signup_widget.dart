@@ -1,7 +1,9 @@
+import 'dart:developer';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:final_project/presentation/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -34,8 +36,10 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   }
 
   @override
+  @mustCallSuper
   void initState() {
     _isPasswordVisible = true;
+    super.initState();
   }
 
   @override
@@ -162,7 +166,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
     } on FirebaseAuthException catch (e) {
-      print(e);
+      if (kDebugMode) {
+        log('data: $e');
+      }
 
       Utils.showSnackBar(e.message, Colors.red);
     }

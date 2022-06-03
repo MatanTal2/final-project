@@ -1,6 +1,6 @@
-import 'package:final_project/page/auth_page.dart';
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -8,12 +8,14 @@ import '../page/about_page.dart';
 import '../page/user_page.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
-  const NavigationDrawerWidget({Key? key}) : super(key: key);
+  NavigationDrawerWidget({Key? key}) : super(key: key);
+  final _auth = FirebaseAuth.instance;
   final padding = const EdgeInsets.symmetric(horizontal: 20.0);
+  String _UserEmail = '';
 
   @override
   Widget build(BuildContext context) {
-    const _name = 'Person Name';
+    const _name = "Person Name";
     const _email = 'abc@gmail.com';
     const _urlImage =
         'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-1.2.1&raw_url=true&q=80&fm=jpg&crop=entropy&cs=tinysrgb&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=928';
@@ -27,39 +29,59 @@ class NavigationDrawerWidget extends StatelessWidget {
               urlImage: _urlImage,
               name: _name,
               email: _email,
-              onClicked: () =>
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          const UserPage(
-                            name: _name,
-                            urlImage: _urlImage,
-                          ))),
+              onClicked: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const UserPage(
+                        name: _name,
+                        urlImage: _urlImage,
+                      ))),
             ),
             Container(
               padding: padding,
               child: Column(
                 children: [
                   const SizedBox(
-                    height: 48.0,
+                    height: 16.0,
                   ),
                   buildMenuItem(
                       text: 'About',
-                      icon: Icons.info,
+                      icon: Icons.info_outline,
                       onClicked: () => selectedItem(context, 0)),
                   const SizedBox(
                     height: 8.0,
                   ),
-                  buildMenuItem(text: 'Item 2', icon: Icons.propane),
+                  buildMenuItem(
+                      text: 'Share',
+                      icon: Icons.share_outlined,
+                      onClicked: () => selectedItem(context, 1)),
                   const SizedBox(
                     height: 8.0,
                   ),
-                  buildMenuItem(text: 'Log out', icon: Icons.logout,
-                  onClicked: () => selectedItem(context, 2)),
+                  buildMenuItem(text: 'Setting', icon: Icons.settings_outlined),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  buildMenuItem(text: 'History', icon: Icons.history_outlined),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  buildMenuItem(text: 'Files', icon: Icons.folder_outlined),
                   const SizedBox(
                     height: 8.0,
                   ),
                   const Divider(
                     color: Colors.white70,
+                    thickness: 1.0,
+                  ),
+                  buildMenuItem(
+                      text: 'Log out',
+                      icon: Icons.logout,
+                      onClicked: () => selectedItem(context, 2)),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  buildMenuItem(text: 'Contact Us', icon: Icons.mail_outline),
+                  const SizedBox(
+                    height: 8.0,
                   ),
                 ],
               ),
@@ -74,6 +96,7 @@ class NavigationDrawerWidget extends StatelessWidget {
       {required String text, required IconData icon, VoidCallback? onClicked}) {
     const color = Colors.white;
     return ListTile(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
       leading: Icon(
         icon,
         color: color,
@@ -91,6 +114,9 @@ class NavigationDrawerWidget extends StatelessWidget {
           builder: (context) => const AboutPage(),
         ));
         break;
+      case 1:
+        getEmail();
+        break;
       case 2:
         signOutUser();
         //navigatorKey.currentState!.popUntil((route) => route.isFirst);
@@ -101,10 +127,11 @@ class NavigationDrawerWidget extends StatelessWidget {
     }
   }
 
-  buildHeader({required String urlImage,
-    required String name,
-    required String email,
-    required VoidCallback onClicked}) =>
+  buildHeader(
+          {required String urlImage,
+          required String name,
+          required String email,
+          required VoidCallback onClicked}) =>
       InkWell(
         onTap: onClicked,
         child: Container(
@@ -144,5 +171,21 @@ class NavigationDrawerWidget extends StatelessWidget {
 
   Future<void> signOutUser() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  Future<void> getEmail() async {
+    final user = _auth.currentUser!;
+    var temp = 'abc@gmail.com';
+    _UserEmail = user.email!;
+    log(_UserEmail);
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      _UserEmail = user?.email ?? temp;
+      log('message: $_UserEmail');
+    } on FirebaseAuthException catch (e) {
+      log('data: $e');
+    }
+
+    //return _UserEmail;
   }
 }

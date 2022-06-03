@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
@@ -13,13 +15,14 @@ class SpeechApi {
       return true;
     }
     final isAvailable = await _speech.initialize(
-      finalTimeout: const Duration(minutes: 1), 
+      finalTimeout: const Duration(minutes: 1),
       //TODO test for timeout, maybe give the user choose.
       onStatus: (status) => onListening(_speech.isListening),
-      onError: (e) => print('Error $e'),
+      onError: (e) => log('Error $e'),
     );
 
-    var locales = await speechLanguagePick();
+    //TODO add this line: var locales = await speechLanguagePick(); for pick language
+
     // TODO
     // TODO Some UI or other code to select a locale (language) from the list
     // TODO resulting in an index, selectedLocale

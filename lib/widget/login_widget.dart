@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:email_validator/email_validator.dart';
 import 'package:final_project/presentation/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,7 +31,9 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   @override
+  @mustCallSuper
   void initState() {
+    super.initState();
     _isPasswordVisible = true;
   }
 
@@ -133,7 +136,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                   builder: (context) => const ForgotPasswordPage(),
                 )),
               ),
-              SizedBox(height: 8.0,),
+              const SizedBox(height: 8.0,),
               RichText(
                 text: TextSpan(
                   text: "No Account? ",
@@ -170,7 +173,7 @@ class _LoginWidgetState extends State<LoginWidget> {
         password: _passwordController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
-      print(e);
+      log('data: $e');
 
       Utils.showSnackBar(e.message, Colors.red);
     }
