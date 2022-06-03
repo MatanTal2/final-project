@@ -1,10 +1,9 @@
 import 'package:avatar_glow/avatar_glow.dart';
-import 'package:final_project/api/speech_api.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
-
+import 'package:final_project/api/speech_api.dart';
+import 'package:flutter/material.dart';
 import '../presentation/utils.dart';
+import '../widget/navigation_drawer_widget.dart';
 
 class SpeechPage extends StatefulWidget {
   const SpeechPage({Key? key}) : super(key: key);
@@ -33,10 +32,11 @@ class _SpeechPageState extends State<SpeechPage> {
                         // TODO: add to Utils showSnackBar more option.
                         Utils.showSnackBar("Copied to clipboard", Colors.tealAccent);
                       },
-                      icon: const Icon(Icons.content_copy),
+                      icon: const Icon(Icons.content_copy,),
                     )),
           ],
         ),
+        drawer: NavigationDrawerWidget(),
         body: SingleChildScrollView(
           reverse: true,
           padding: const EdgeInsets.all(30.0).copyWith(bottom: 150.0),

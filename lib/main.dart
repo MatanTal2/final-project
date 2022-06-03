@@ -3,19 +3,18 @@ import 'package:final_project/page/speech_page.dart';
 import 'package:final_project/presentation/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  runApp(const MyAp());
+  runApp(const MyApp());
 }
 final navigatorKey = GlobalKey<NavigatorState>();
 
-class MyAp extends StatelessWidget {
-  const MyAp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
   static const String title = 'Speech to text';
 
   @override
@@ -32,7 +31,6 @@ class MyAp extends StatelessWidget {
     home: const MainPage(),
   );
 }
-
 
 
 
