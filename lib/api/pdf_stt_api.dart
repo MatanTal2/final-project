@@ -6,8 +6,6 @@ import 'package:pdf/widgets.dart';
 import '../model/personal_info.dart';
 import '../model/speech_data.dart';
 
-import '../presentation/utils.dart';
-
 class PdfSTTApi {
   static Future<File> generate(SpeechData textVoice, String fileName) async {
     final pdf = Document();
@@ -16,7 +14,6 @@ class PdfSTTApi {
       build: (context) => [
         buildHeader(textVoice),
         SizedBox(height: 3 * PdfPageFormat.cm),
-        buildTitle(textVoice),
         buildSubject(textVoice),
         SizedBox(height: 1 * PdfPageFormat.cm),
         buildBody(textVoice),
@@ -52,14 +49,6 @@ class PdfSTTApi {
     ],
   );
 
-  static Widget buildCustomerAddress(PersonalInfo person) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(person.name, style: TextStyle(fontWeight: FontWeight.bold)),
-      Text(person.mail),
-    ],
-  );
-
 
 
   static Widget buildPersonDetails(PersonalInfo person) => Column(
@@ -86,7 +75,7 @@ class PdfSTTApi {
   static Widget buildSubject (SpeechData subject) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      buildSimpleText(title: 'Subject:', value: subject.sttSubject.subject),
+      Text(subject.sttSubject.subject, style: TextStyle(fontSize: 20.0,fontWeight: FontWeight.bold)),
     ],
   );
   static Widget buildBody (SpeechData body) => Column(
@@ -94,7 +83,7 @@ class PdfSTTApi {
     children: [
       Text(
         body.sttBody.body,
-        style: const TextStyle(fontSize: 16,),
+        style: const TextStyle(fontSize: 16.0 ,),
       ),
       SizedBox(height: 0.8 * PdfPageFormat.cm),
       //Text(invoice.sttBody.text),

@@ -4,13 +4,13 @@ import 'package:final_project/model/stt_subject.dart';
 
 
 class SpeechData {
+  final PersonalInfo personalInfo;
   final STTSubject sttSubject;
   final STTBody sttBody;
-  final PersonalInfo personalInfo;
 
   const SpeechData({
+    required this.personalInfo,
     required this.sttSubject,
     required this.sttBody,
-    required this.personalInfo,
   });
 }
