@@ -25,12 +25,15 @@ class SpeechPage extends StatefulWidget {
 
 class _SpeechPageState extends State<SpeechPage> {
   final _auth = FirebaseAuth.instance;
-  String _text = 'Press the button and start speaking';
+  String _textBody = 'Body:\nPress the button and start speaking';
+  String _textTitle = "Title:";
   bool _isListening = false;
-  final String _userFileName = 'newFile';
-  final file = File('example.pdf');
+  String _userFileName = 'newFile';
   String _currentUserEmail = '';
   String _currentUserName = '';
+
+  int _currentIndex = 0;
+  final _fileNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -43,7 +46,7 @@ class _SpeechPageState extends State<SpeechPage> {
             Builder(
                 builder: (context) => IconButton(
                       onPressed: () async {
-                        await FlutterClipboard.copy(_text);
+                        await FlutterClipboard.copy(_textTitle + '\n' + _textBody);
                         // feedback to user when click the button
                         // TODO: add to Utils showSnackBar more option.
                         Utils.showSnackBar(
@@ -63,22 +66,25 @@ class _SpeechPageState extends State<SpeechPage> {
                             _auth.currentUser?.displayName ?? 'empty';
                         _currentUserEmail = _auth.currentUser?.email ?? 'empty';
 
+                        // create file name
+                        await openDialog();
+                        String fileName = _userFileName + '.pdf';
+                        log('file name: $fileName');
+
                         final speechData = SpeechData(
-                          sttSubject: STTSubject(subject: _text),
-                          sttBody: STTBody(body: _text),
+                          sttSubject: STTSubject(subject: _textTitle),
+                          sttBody: STTBody(body: _textBody),
                           personalInfo: PersonalInfo(
                             name: _currentUserName,
                             mail: _currentUserEmail,
                           ),
                         );
-                        String fileName = _userFileName + '.pdf';
-                        log('file name: $fileName');
+
                         final pdfFile =
                             await PdfSTTApi.generate(speechData, fileName);
 
                         PdfApi.openFile(pdfFile);
 
-                        await _createPdf();
                       },
                       icon: const Icon(
                         Icons.picture_as_pdf,
@@ -90,22 +96,59 @@ class _SpeechPageState extends State<SpeechPage> {
         body: SingleChildScrollView(
           reverse: true,
           padding: const EdgeInsets.all(30.0).copyWith(bottom: 150.0),
-          child: Text(
-            _text,
-            style: const TextStyle(
-              fontSize: 32.0,
-              color: Colors.white70,
-              fontWeight: FontWeight.bold,
-            ),
+          child: Column(
+            children: [
+              Text(
+                _textTitle,
+                style: const TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                _textBody,
+                style: const TextStyle(
+                  fontSize: 26.0,
+                  color: Colors.white70,
+                ),
+              ),
+            ],
           ),
         ),
+        bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.shifting,
+            currentIndex: _currentIndex,
+            selectedItemColor: Colors.amber,
+            onTap: (index) => setState(() => _currentIndex = index),
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.text_fields_outlined,
+                  size: 32.0,
+                ),
+                label: 'body',
+                backgroundColor: Colors.teal,
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.title,
+                  size: 32.0,
+                ),
+                label: 'title',
+                backgroundColor: Colors.teal,
+              ),
+            ]),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: AvatarGlow(
           animate: _isListening,
           endRadius: 75.0,
-          glowColor: Theme.of(context).secondaryHeaderColor,
+          glowColor: Colors.white70,
           child: FloatingActionButton(
-            onPressed: toggleRecording,
+            onPressed: () {
+              if (_currentIndex == 0) toggleMultiRecording(_textTitle);
+              if (_currentIndex == 1) toggleMultiRecording(_textBody);
+            },
             child: Icon(
               _isListening ? Icons.mic : Icons.mic_none,
               size: 36.0,
@@ -116,22 +159,16 @@ class _SpeechPageState extends State<SpeechPage> {
 
   Future toggleRecording() {
     return SpeechApi.toggleRecording(
-      onResult: (text) => setState(() => _text = text),
-      onListening: (isListening) => setState(() => _isListening = isListening));
+        onResult: (text) => setState(() => _textBody = text),
+        onListening: (isListening) =>
+            setState(() => _isListening = isListening));
   }
 
-  Future<void> _createPdf() async {
-    final pdf = pw.Document();
-    log('pdf: $pdf');
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) => pw.Center(
-          child: pw.Text('Hello World!'),
-        ),
-      ),
-    );
-
-    await file.writeAsBytes(await pdf.save());
+  Future toggleMultiRecording(String result) {
+    return SpeechApi.toggleRecording(
+        onResult: (text) => setState(() => result = text),
+        onListening: (isListening) =>
+            setState(() => _isListening = isListening));
   }
 
   Future<void> getName() async {
@@ -146,11 +183,34 @@ class _SpeechPageState extends State<SpeechPage> {
   Future<void> getEmail() async {
     try {
       final user = _auth.currentUser!;
-
-      var temp = 'abc@gmail.com';
       _currentUserEmail = user.email!;
     } on FirebaseAuthException catch (e) {
       log('data: $e');
     }
+  }
+
+  Future openDialog() => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            title: const Text('File name'),
+            content: TextField(
+              autofocus: true,
+              maxLength: 40,
+              controller: _fileNameController,
+              decoration: const InputDecoration(hintText: 'Enter file name'),
+            ),
+            actions: [
+              TextButton(
+                onPressed: submit,
+                child: const Text('Create'),
+              )
+            ],
+          ));
+
+  void submit() {
+    Navigator.of(context).pop();
+    _fileNameController.text == ''
+        ? _userFileName = DateTime.now().toString()
+        : _userFileName = _fileNameController.text;
   }
 }
