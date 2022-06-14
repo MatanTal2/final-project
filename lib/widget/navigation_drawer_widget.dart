@@ -1,8 +1,8 @@
-import 'dart:developer';
+// ignore_for_file: must_be_immutable
 
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../main.dart';
 import '../page/about_page.dart';
 import '../page/user_page.dart';
@@ -11,15 +11,15 @@ class NavigationDrawerWidget extends StatelessWidget {
   NavigationDrawerWidget({Key? key}) : super(key: key);
   final _auth = FirebaseAuth.instance;
   final padding = const EdgeInsets.symmetric(horizontal: 20.0);
-  String _UserEmail = '';
+  String _currentUserEmail = '';
+  String _currentUserName = '';
 
   @override
   Widget build(BuildContext context) {
-    const _name = "Person Name";
-    const _email = 'abc@gmail.com';
     const _urlImage =
         'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?ixlib=rb-1.2.1&raw_url=true&q=80&fm=jpg&crop=entropy&cs=tinysrgb&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=928';
-
+    getEmail();
+    getName();
     return Drawer(
       child: Material(
         color: Colors.amber[700],
@@ -27,11 +27,11 @@ class NavigationDrawerWidget extends StatelessWidget {
           children: [
             buildHeader(
               urlImage: _urlImage,
-              name: _name,
-              email: _email,
+              name: _currentUserName,
+              email: _currentUserEmail,
               onClicked: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const UserPage(
-                        name: _name,
+                  builder: (context) => UserPage(
+                        name: _currentUserName,
                         urlImage: _urlImage,
                       ))),
             ),
@@ -170,22 +170,27 @@ class NavigationDrawerWidget extends StatelessWidget {
       );
 
   Future<void> signOutUser() async {
-    await FirebaseAuth.instance.signOut();
+    await _auth.signOut();
+  }
+
+  Future<void> getName() async {
+    try {
+      final user = _auth.currentUser!;
+      _currentUserName = user.displayName!;
+      log('message $_currentUserName');
+    } on FirebaseAuthException catch (e) {
+      log('getNameErr: $e');
+    }
   }
 
   Future<void> getEmail() async {
-    final user = _auth.currentUser!;
-    var temp = 'abc@gmail.com';
-    _UserEmail = user.email!;
-    log(_UserEmail);
     try {
-      User? user = FirebaseAuth.instance.currentUser;
-      _UserEmail = user?.email ?? temp;
-      log('message: $_UserEmail');
+      final user = _auth.currentUser!;
+
+      var temp = 'abc@gmail.com';
+      _currentUserEmail = user.email!;
     } on FirebaseAuthException catch (e) {
       log('data: $e');
     }
-
-    //return _UserEmail;
   }
 }
