@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:developer';
+import 'package:final_project/page/contact_us.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
@@ -56,15 +57,27 @@ class NavigationDrawerWidget extends StatelessWidget {
                   const SizedBox(
                     height: 8.0,
                   ),
-                  buildMenuItem(text: 'Setting', icon: Icons.settings_outlined),
+                  buildMenuItem(
+                    text: 'Setting',
+                    icon: Icons.settings_outlined,
+                    onClicked: () => selectedItem(context, 2),
+                  ),
                   const SizedBox(
                     height: 8.0,
                   ),
-                  buildMenuItem(text: 'History', icon: Icons.history_outlined),
+                  buildMenuItem(
+                    text: 'History',
+                    icon: Icons.history_outlined,
+                    onClicked: () => selectedItem(context, 3),
+                  ),
                   const SizedBox(
                     height: 8.0,
                   ),
-                  buildMenuItem(text: 'Files', icon: Icons.folder_outlined),
+                  buildMenuItem(
+                    text: 'Files',
+                    icon: Icons.folder_outlined,
+                    onClicked: () => selectedItem(context, 4),
+                  ),
                   const SizedBox(
                     height: 8.0,
                   ),
@@ -75,11 +88,15 @@ class NavigationDrawerWidget extends StatelessWidget {
                   buildMenuItem(
                       text: 'Log out',
                       icon: Icons.logout,
-                      onClicked: () => selectedItem(context, 2)),
+                      onClicked: () => selectedItem(context, 5)),
                   const SizedBox(
                     height: 8.0,
                   ),
-                  buildMenuItem(text: 'Contact Us', icon: Icons.mail_outline),
+                  buildMenuItem(
+                    text: 'Contact Us',
+                    icon: Icons.mail_outline,
+                    onClicked: () => selectedItem(context, 6),
+                  ),
                   const SizedBox(
                     height: 8.0,
                   ),
@@ -109,21 +126,33 @@ class NavigationDrawerWidget extends StatelessWidget {
   void selectedItem(BuildContext context, int index) {
     Navigator.of(context).pop();
     switch (index) {
-      case 0:
+      case 0: // about
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => const AboutPage(),
         ));
         break;
-      case 1:
+      case 1: // share
         getEmail();
         break;
-      case 2:
+      case 2: // Settings
+        break;
+      case 3: //History
+        break;
+      case 4: // Files
+        break;
+      case 5: // Logout
         signOutUser();
         //navigatorKey.currentState!.popUntil((route) => route.isFirst);
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => const MainPage(),
         ));
         break;
+      case 6: // Contact us
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const ContactUs(),
+        ));
+        break;
+
     }
   }
 
