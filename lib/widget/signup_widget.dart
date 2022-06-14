@@ -24,7 +24,9 @@ class SignUpWidget extends StatefulWidget {
 class _SignUpWidgetState extends State<SignUpWidget> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _fullName = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
 
   bool _isPasswordVisible = true;
 
@@ -32,6 +34,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _fullName.dispose();
     super.dispose();
   }
 
@@ -60,7 +63,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 height: 20.0,
               ),
               const Text(
-                "Welcome, Sign UP!",
+                "Lets Sign UP!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -83,8 +86,15 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         ? 'Enter a valid email'
                         : null,
               ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: const Text(
+                  '*',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
               const SizedBox(
-                height: 4.0,
+                height: 2.0,
               ),
               TextFormField(
                 controller: _passwordController,
@@ -98,9 +108,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                     icon: Icon(_isPasswordVisible
                         ? Icons.visibility_off
                         : Icons.visibility),
-                    color: _isPasswordVisible
-                        ? Colors.white30
-                        : Colors.redAccent,
+                    color:
+                        _isPasswordVisible ? Colors.white30 : Colors.redAccent,
                   ),
                 ),
                 obscureText: _isPasswordVisible,
@@ -110,6 +119,21 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             6 //Todo: create password validator function
                     ? 'Enter minimum, 6 digits'
                     : null,
+              ),
+              Container(
+                alignment: Alignment.topLeft,
+                child: const Text(
+                  '*',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+              const SizedBox(
+                height: 18.0,
+              ),
+              TextFormField(
+                controller: _fullName,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(labelText: 'Full name'),
               ),
               const SizedBox(
                 height: 20.0,
@@ -162,9 +186,18 @@ class _SignUpWidgetState extends State<SignUpWidget> {
               child: CircularProgressIndicator(),
             ));
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: _emailController.text.trim(),
+              password: _passwordController.text.trim())
+          .then((value) {
+        // TODO: add the ability to upload photo (risk by XSS - cross site attack.) check for options,
+        // TODO: add email validation
+        //value.user.sendEmailVerification();
+        value.user?.updateDisplayName(
+            _fullName.text != '' ? _fullName.text : 'Hello, stranger');
+        //return null;
+      });
     } on FirebaseAuthException catch (e) {
       if (kDebugMode) {
         log('data: $e');

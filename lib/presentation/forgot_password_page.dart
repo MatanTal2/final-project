@@ -98,7 +98,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       navigatorKey.currentState!.popUntil((route) => route.isFirst);
       } on FirebaseAuthException catch (e) {
         log('data: $e');
-        Utils.showSnackBar(e.message, Colors.red);
+        Utils.showSnackBar('Must type email address', Colors.red);
         Navigator.of(context).pop();
     }
   }
