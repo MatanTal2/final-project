@@ -9,8 +9,9 @@ import '../model/speech_data.dart';
 class PdfSTTApi {
   static Future<File> generate(SpeechData textVoice, String fileName) async {
     final pdf = Document();
-    // TODO alertDialog for the file name.
+
     pdf.addPage(MultiPage(
+      theme: ThemeData(defaultTextStyle: TextStyle()),
       build: (context) => [
         buildHeader(textVoice),
         SizedBox(height: 3 * PdfPageFormat.cm),

@@ -146,8 +146,8 @@ class _SpeechPageState extends State<SpeechPage> {
           glowColor: Colors.white70,
           child: FloatingActionButton(
             onPressed: () {
-              if (_currentIndex == 0) toggleMultiRecording(_textTitle);
-              if (_currentIndex == 1) toggleMultiRecording(_textBody);
+              log('record with $_currentIndex');
+              toggleMultiRecording(_currentIndex);
             },
             child: Icon(
               _isListening ? Icons.mic : Icons.mic_none,
@@ -164,11 +164,20 @@ class _SpeechPageState extends State<SpeechPage> {
             setState(() => _isListening = isListening));
   }
 
-  Future toggleMultiRecording(String result) {
-    return SpeechApi.toggleRecording(
-        onResult: (text) => setState(() => result = text),
-        onListening: (isListening) =>
-            setState(() => _isListening = isListening));
+  Future toggleMultiRecording(int index) {
+    if(index == 0){
+      return SpeechApi.toggleRecording(
+          onResult: (text) => setState(() => _textTitle = text),
+          onListening: (isListening) =>
+              setState(() => _isListening = isListening));
+    }
+    else{
+      return SpeechApi.toggleRecording(
+          onResult: (text) => setState(() => _textBody = text),
+          onListening: (isListening) =>
+              setState(() => _isListening = isListening));
+    }
+
   }
 
   Future<void> getName() async {
