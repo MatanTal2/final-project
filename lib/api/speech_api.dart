@@ -16,6 +16,7 @@ class SpeechApi {
     }
     final isAvailable = await _speech.initialize(
       finalTimeout: const Duration(minutes: 1),
+
       //TODO test for timeout, maybe give the user choose.
       onStatus: (status) => onListening(_speech.isListening),
       onError: (e) => log('Error $e'),

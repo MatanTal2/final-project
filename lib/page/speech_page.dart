@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:final_project/api/pdf_api.dart';
@@ -10,11 +9,9 @@ import 'package:final_project/model/stt_body.dart';
 import 'package:final_project/model/stt_subject.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pdf/widgets.dart' as pw;
 import '../model/personal_info.dart';
 import '../presentation/utils.dart';
 import '../widget/navigation_drawer_widget.dart';
-//import '../widget/navigation_drawer_widget.dartimport 'dart:io';
 
 class SpeechPage extends StatefulWidget {
   const SpeechPage({Key? key}) : super(key: key);
@@ -25,8 +22,9 @@ class SpeechPage extends StatefulWidget {
 
 class _SpeechPageState extends State<SpeechPage> {
   final _auth = FirebaseAuth.instance;
-  String _textBody = 'Body:\nPress the button and start speaking';
-  String _textTitle = "Title:";
+  String _textBody =
+      ' גוף ההודעה הזה יחסית קצר אבל מדמה 2-3 שורות בשפה העברית שיוצגו בקובץ ה PDF שכרגע אני מקווה יודע לשלב 2 שפות';
+  String _textTitle = "כותרת שתופיע בבולד ? ";
   bool _isListening = false;
   String _userFileName = 'newFile';
   String _currentUserEmail = '';
@@ -46,7 +44,8 @@ class _SpeechPageState extends State<SpeechPage> {
             Builder(
                 builder: (context) => IconButton(
                       onPressed: () async {
-                        await FlutterClipboard.copy(_textTitle + '\n' + _textBody);
+                        await FlutterClipboard.copy(
+                            _textTitle + '\n\n\n' + _textBody);
                         // feedback to user when click the button
                         // TODO: add to Utils showSnackBar more option.
                         Utils.showSnackBar(
@@ -72,8 +71,9 @@ class _SpeechPageState extends State<SpeechPage> {
                         log('file name: $fileName');
 
                         final speechData = SpeechData(
-                          sttSubject: STTSubject(subject: _textTitle),
-                          sttBody: STTBody(body: _textBody),
+                          sttSubject:
+                              STTSubject(subject: reversText(_textTitle)),
+                          sttBody: STTBody(body: reversText(_textBody)),
                           personalInfo: PersonalInfo(
                             name: _currentUserName,
                             mail: _currentUserEmail,
@@ -84,7 +84,6 @@ class _SpeechPageState extends State<SpeechPage> {
                             await PdfSTTApi.generate(speechData, fileName);
 
                         PdfApi.openFile(pdfFile);
-
                       },
                       icon: const Icon(
                         Icons.picture_as_pdf,
@@ -96,24 +95,31 @@ class _SpeechPageState extends State<SpeechPage> {
         body: SingleChildScrollView(
           reverse: true,
           padding: const EdgeInsets.all(30.0).copyWith(bottom: 150.0),
-          child: Column(
-            children: [
-              Text(
-                _textTitle,
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.white70,
-                  fontWeight: FontWeight.bold,
+          child: Container(
+            alignment: Alignment.topRight,
+            child: Column(
+              textDirection: TextDirection.rtl,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _textTitle,
+                  textDirection: TextDirection.rtl,
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.white70,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Text(
-                _textBody,
-                style: const TextStyle(
-                  fontSize: 26.0,
-                  color: Colors.white70,
+                Text(
+                  _textBody,
+                  textDirection: TextDirection.rtl,
+                  style: const TextStyle(
+                    fontSize: 26.0,
+                    color: Colors.white70,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -127,7 +133,7 @@ class _SpeechPageState extends State<SpeechPage> {
                   Icons.text_fields_outlined,
                   size: 32.0,
                 ),
-                label: 'body',
+                label: 'גוף',
                 backgroundColor: Colors.teal,
               ),
               BottomNavigationBarItem(
@@ -135,7 +141,7 @@ class _SpeechPageState extends State<SpeechPage> {
                   Icons.title,
                   size: 32.0,
                 ),
-                label: 'title',
+                label: 'כותרת',
                 backgroundColor: Colors.teal,
               ),
             ]),
@@ -146,8 +152,8 @@ class _SpeechPageState extends State<SpeechPage> {
           glowColor: Colors.white70,
           child: FloatingActionButton(
             onPressed: () {
-              if (_currentIndex == 0) toggleMultiRecording(_textTitle);
-              if (_currentIndex == 1) toggleMultiRecording(_textBody);
+              log('record with $_currentIndex');
+              toggleMultiRecording(_currentIndex);
             },
             child: Icon(
               _isListening ? Icons.mic : Icons.mic_none,
@@ -164,11 +170,18 @@ class _SpeechPageState extends State<SpeechPage> {
             setState(() => _isListening = isListening));
   }
 
-  Future toggleMultiRecording(String result) {
-    return SpeechApi.toggleRecording(
-        onResult: (text) => setState(() => result = text),
-        onListening: (isListening) =>
-            setState(() => _isListening = isListening));
+  Future toggleMultiRecording(int index) {
+    if (index == 0) {
+      return SpeechApi.toggleRecording(
+          onResult: (text) => setState(() => _textBody = text),
+          onListening: (isListening) =>
+              setState(() => _isListening = isListening));
+    } else {
+      return SpeechApi.toggleRecording(
+          onResult: (text) => setState(() => _textTitle = text),
+          onListening: (isListening) =>
+              setState(() => _isListening = isListening));
+    }
   }
 
   Future<void> getName() async {
@@ -212,5 +225,32 @@ class _SpeechPageState extends State<SpeechPage> {
     _fileNameController.text == ''
         ? _userFileName = DateTime.now().toString()
         : _userFileName = _fileNameController.text;
+  }
+
+  String reversText(String text) {
+    String revText = "";
+    String engWord = "";
+    for (int i = text.length - 1; i >= 0; i--) {
+      if (RegExp('r*[a-zA-Z]').hasMatch(text[i])) {
+        engWord += text[i];
+        continue;
+      }
+      if (engWord.isNotEmpty) {
+        engWord = reversWord(engWord);
+        revText += engWord += text[i];
+        engWord = "";
+      } else {
+        revText += text[i];
+      }
+    }
+    return revText;
+  }
+
+  String reversWord(String word) {
+    String revWord = "";
+    for (int i = word.length - 1; i >= 0; i--) {
+      revWord += word[i];
+    }
+    return revWord;
   }
 }
