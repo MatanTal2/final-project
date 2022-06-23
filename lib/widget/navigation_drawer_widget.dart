@@ -240,7 +240,6 @@ class NavigationDrawerWidget extends StatelessWidget {
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
-
     if (result == null) {
       return;
     }

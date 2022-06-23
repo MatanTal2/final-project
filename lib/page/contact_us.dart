@@ -20,17 +20,17 @@ class _ContactUsState extends State<ContactUs> {
           backgroundColor: Colors.amber,
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              BuildTextField(
+              buildTextField(
                 title: 'Subject',
                 controller: _subjectController,
               ),
               const SizedBox(
                 height: 16.0,
               ),
-              BuildTextField(
+              buildTextField(
                   title: 'Message',
                   controller: _messageController,
                   maxLines: 8),
@@ -43,12 +43,11 @@ class _ContactUsState extends State<ContactUs> {
                   minimumSize: const Size.fromHeight(50.0),
                   textStyle: const TextStyle(fontSize: 20.0),
                 ),
-                onPressed: () {} ,
-                // => launchEmail(
-                //   toEmail: 'mamash17@gmail.com',
-                //   subject: _subjectController.text,
-                //   message: _messageController.text,
-                // ),
+                onPressed: () => launchEmail(
+                  toEmail: 'mamash17@gmail.com',
+                  subject: _subjectController.text,
+                  message: _messageController.text,
+                ),
                 child: const Text('Send'),
               )
             ],
@@ -56,7 +55,7 @@ class _ContactUsState extends State<ContactUs> {
         ),
       );
 
-  Widget BuildTextField(
+  Widget buildTextField(
           {required String title,
           required TextEditingController controller,
           int maxLines = 1}) =>
@@ -65,12 +64,12 @@ class _ContactUsState extends State<ContactUs> {
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 9.0,
           ),
           TextField(
@@ -94,11 +93,20 @@ class _ContactUsState extends State<ContactUs> {
       {required String toEmail,
       required String subject,
       required String message}) async {
-    final url = Uri.dataFromString(
-        'mailto:$toEmail?subject=${Uri.encodeFull(subject)}&body=${Uri.encodeFull(message)}');
-
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
+    String? encodeQueryParameters(Map<String, String> params) {
+      return params.entries
+          .map((e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .join('&');
     }
+
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: toEmail,
+      query: encodeQueryParameters(
+          <String, String>{'subject': subject, 'body': message}),
+    );
+
+    launchUrl(emailLaunchUri);
   }
 }
