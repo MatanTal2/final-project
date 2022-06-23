@@ -4,9 +4,11 @@ import 'dart:developer';
 import 'package:final_project/page/contact_us.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 import '../main.dart';
 import '../page/about_page.dart';
 import '../page/user_page.dart';
+import 'package:file_picker/file_picker.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
   NavigationDrawerWidget({Key? key}) : super(key: key);
@@ -139,6 +141,7 @@ class NavigationDrawerWidget extends StatelessWidget {
       case 3: //History
         break;
       case 4: // Files
+        systemFilesPicker();
         break;
       case 5: // Logout
         signOutUser();
@@ -152,7 +155,6 @@ class NavigationDrawerWidget extends StatelessWidget {
           builder: (context) => const ContactUs(),
         ));
         break;
-
     }
   }
 
@@ -221,5 +223,29 @@ class NavigationDrawerWidget extends StatelessWidget {
     } on FirebaseAuthException catch (e) {
       log('data: $e');
     }
+  }
+
+  void openFile(PlatformFile file) {
+    OpenFile.open(file.path);
+  }
+
+  void systemFilesPicker() async {
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    log('dir $selectedDirectory');
+    if (selectedDirectory == null) {
+      return;
+    }
+    final result = await FilePicker.platform.pickFiles(
+      initialDirectory: selectedDirectory,
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result == null) {
+      return;
+    }
+    // open single file
+    final file = result.files.first;
+    openFile(file);
   }
 }
