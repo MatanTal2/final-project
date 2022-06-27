@@ -58,6 +58,9 @@ dependencies:
   # to pickup file from system
   file_picker: ^4.6.1
 
+  #another pdf package
+  # syncfusion_flutter_pdf: ^20.1.61-beta
+
 
 dev_dependencies:
   flutter_test:
