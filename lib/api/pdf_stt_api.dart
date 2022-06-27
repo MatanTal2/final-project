@@ -10,19 +10,8 @@ class PdfSTTApi {
   static Future<File> generate(SpeechData textVoice, String fileName) async {
     final pdf = Document();
 
-    var myTheme = ThemeData.withFont(
-      base: Font.ttf(
-          await rootBundle.load("assets/fonts/openSans/OpenSans-Regular.ttf")),
-      bold: Font.ttf(
-          await rootBundle.load("assets/fonts/openSans/OpenSans-Bold.ttf")),
-      italic: Font.ttf(
-          await rootBundle.load("assets/fonts/openSans/OpenSans-Italic.ttf")),
-      boldItalic: Font.ttf(await rootBundle
-          .load("assets/fonts/openSans/OpenSans-BoldItalic.ttf")),
-    );
-
     pdf.addPage(MultiPage(
-      theme: myTheme,
+      theme: await getMyTheme(),
       textDirection: TextDirection.rtl,
       build: (context) {
         return [
@@ -92,15 +81,14 @@ class PdfSTTApi {
       ));
 
   static Widget buildSubject(SpeechData subject) => Container(
-    alignment: Alignment.topRight,
-    child: Column(
+        alignment: Alignment.topRight,
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           //mainAxisSize: MainAxisSize.min,
           //mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(subject.sttSubject.subject,
                 textDirection: TextDirection.rtl,
-
                 style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
@@ -123,8 +111,6 @@ class PdfSTTApi {
               ),
             ),
             SizedBox(height: 0.8 * PdfPageFormat.cm),
-            //Text(invoice.sttBody.text),
-            //SizedBox(height: 0.8 * PdfPageFormat.cm),
           ],
         ),
       );
@@ -151,7 +137,7 @@ class PdfSTTApi {
       children: [
         Text(title, style: style),
         SizedBox(width: 2 * PdfPageFormat.mm),
-        Text(value, style: TextStyle(fontSize: 16)),
+        Text(value, style: const TextStyle(fontSize: 16)),
       ],
     );
   }
@@ -173,6 +159,19 @@ class PdfSTTApi {
           Text(value, style: unite ? style : null),
         ],
       ),
+    );
+  }
+
+  static Future<ThemeData> getMyTheme() async {
+    return ThemeData.withFont(
+      base: Font.ttf(
+          await rootBundle.load("assets/fonts/openSans/OpenSans-Regular.ttf")),
+      bold: Font.ttf(
+          await rootBundle.load("assets/fonts/openSans/OpenSans-Bold.ttf")),
+      italic: Font.ttf(
+          await rootBundle.load("assets/fonts/openSans/OpenSans-Italic.ttf")),
+      boldItalic: Font.ttf(await rootBundle
+          .load("assets/fonts/openSans/OpenSans-BoldItalic.ttf")),
     );
   }
 }
